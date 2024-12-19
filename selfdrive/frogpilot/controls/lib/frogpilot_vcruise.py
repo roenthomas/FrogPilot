@@ -16,7 +16,7 @@ class FrogPilotVCruise:
     self.frogpilot_planner = FrogPilotPlanner
 
     self.mtsc = MapTurnSpeedController()
-    self.slc = SpeedLimitController()
+    self.slc = SpeedLimitController(self)
 
     self.forcing_stop = False
     self.override_force_stop = False

@@ -7,7 +7,9 @@ from openpilot.selfdrive.frogpilot.frogpilot_utilities import calculate_distance
 from openpilot.selfdrive.frogpilot.frogpilot_variables import TO_RADIANS, params, params_memory
 
 class SpeedLimitController:
-  def __init__(self):
+  def __init__(self, FrogPilotVCruise:
+    self.frogpilot_vcruise = FrogPilotVCruise
+
     self.experimental_mode = False
 
     self.desired_speed_limit = 0
@@ -69,11 +71,11 @@ class SpeedLimitController:
         self.map_speed_limit = self.upcoming_speed_limit
 
   def get_offset(self, frogpilot_toggles):
-    if self.speed_limit < 13.5:
+    if self.frogpilot_vcruise.slc_target - self.offset < 13.5:
       return frogpilot_toggles.speed_limit_offset1
-    if self.speed_limit < 24:
+    if self.frogpilot_vcruise.slc_target - self.offset < 24:
       return frogpilot_toggles.speed_limit_offset2
-    if self.speed_limit < 29:
+    if self.frogpilot_vcruise.slc_target - self.offset < 29:
       return frogpilot_toggles.speed_limit_offset3
     return frogpilot_toggles.speed_limit_offset4
 
