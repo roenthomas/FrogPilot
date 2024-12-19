@@ -37,8 +37,8 @@ MODELS_PATH = os.path.join("/data", "models")
 RANDOM_EVENTS_PATH = os.path.join(BASEDIR, "selfdrive", "frogpilot", "assets", "random_events")
 THEME_SAVE_PATH = os.path.join("/data", "themes")
 
-DEFAULT_MODEL = "north-america"
-DEFAULT_MODEL_NAME = "North America 👀📡"
+DEFAULT_MODEL = "national-public-radio"
+DEFAULT_MODEL_NAME = "National Public Radio 👀📡"
 
 DEFAULT_CLASSIC_MODEL = "wd-40"
 DEFAULT_CLASSIC_MODEL_NAME = "WD-40 (Default) 👀📡"
