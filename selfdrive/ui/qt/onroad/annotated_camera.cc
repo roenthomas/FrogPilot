@@ -814,14 +814,14 @@ void AnnotatedCameraWidget::drawLead(QPainter &painter, const cereal::RadarState
         text = QString("%1 %2 | %3 %4")
                 .arg(qRound(d_rel * distanceConversion))
                 .arg(leadDistanceUnit)
-                .arg(qRound(lead_speed * speedConversion))
+                .arg(qRound(lead_speed * speedConversionMetrics))
                 .arg(leadSpeedUnit);
       } else {
         text = QString("%1 %2 (%3) | %4 %5 | %6 %7")
                 .arg(qRound(d_rel * distanceConversion))
                 .arg(leadDistanceUnit)
                 .arg(QString("Desired: %1").arg(desiredFollow * distanceConversion))
-                .arg(qRound(lead_speed * speedConversion))
+                .arg(qRound(lead_speed * speedConversionMetrics))
                 .arg(leadSpeedUnit)
                 .arg(QString::number(d_rel / std::max(v_ego, 1.0f), 'f', 1))
                 .arg("s");
