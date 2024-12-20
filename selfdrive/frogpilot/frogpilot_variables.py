@@ -690,9 +690,9 @@ class FrogPilotVariables:
     toggle.speed_limit_controller_override_manual = slc_override_method == 1
     toggle.speed_limit_controller_override_set_speed = slc_override_method == 2
     toggle.speed_limit_offset1 = (params.get_int("Offset1") * speed_conversion if tuning_level >= level["Offset1"] else default.get_int("Offset1") * CV.MPH_TO_MS) if toggle.speed_limit_controller else 0
-    toggle.speed_limit_offset2 = params.get_int("Offset2") * speed_conversion if toggle.speed_limit_controller and tuning_level >= level["Offset2"] else default.get_int("Offset2") * CV.MPH_TO_MS
-    toggle.speed_limit_offset3 = params.get_int("Offset3") * speed_conversion if toggle.speed_limit_controller and tuning_level >= level["Offset3"] else default.get_int("Offset3") * CV.MPH_TO_MS
-    toggle.speed_limit_offset4 = params.get_int("Offset4") * speed_conversion if toggle.speed_limit_controller and tuning_level >= level["Offset4"] else default.get_int("Offset4") * CV.MPH_TO_MS
+    toggle.speed_limit_offset2 = (params.get_int("Offset2") * speed_conversion if tuning_level >= level["Offset2"] else default.get_int("Offset2") * CV.MPH_TO_MS) if toggle.speed_limit_controller else 0
+    toggle.speed_limit_offset3 = (params.get_int("Offset3") * speed_conversion if tuning_level >= level["Offset3"] else default.get_int("Offset3") * CV.MPH_TO_MS) if toggle.speed_limit_controller else 0
+    toggle.speed_limit_offset4 = (params.get_int("Offset4") * speed_conversion if tuning_level >= level["Offset4"] else default.get_int("Offset4") * CV.MPH_TO_MS) if toggle.speed_limit_controller else 0
     toggle.speed_limit_priority1 = params.get("SLCPriority1", encoding='utf-8') if toggle.speed_limit_controller and tuning_level >= level["SLCPriority1"] else default.get("SLCPriority1", encoding='utf-8')
     toggle.speed_limit_priority2 = params.get("SLCPriority2", encoding='utf-8') if toggle.speed_limit_controller and tuning_level >= level["SLCPriority2"] else default.get("SLCPriority2", encoding='utf-8')
     toggle.speed_limit_priority3 = params.get("SLCPriority3", encoding='utf-8') if toggle.speed_limit_controller and tuning_level >= level["SLCPriority3"] else default.get("SLCPriority3", encoding='utf-8')
