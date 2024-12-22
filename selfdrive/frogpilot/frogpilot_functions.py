@@ -191,8 +191,7 @@ def frogpilot_boot_functions(build_metadata, params_storage):
       print("Waiting for system time to become valid...")
       time.sleep(1)
 
-    if params.get("UpdaterAvailableBranches") is None:
-      subprocess.run(["pkill", "-SIGUSR1", "-f", "system.updated.updated"], check=False)
+    subprocess.run(["pkill", "-SIGUSR1", "-f", "system.updated.updated"], check=False)
 
     backup_frogpilot(build_metadata)
     backup_toggles(params_storage)

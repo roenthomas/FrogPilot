@@ -84,6 +84,7 @@ void OnroadWindow::updateState(const UIState &s) {
   // FrogPilot variables
   const UIScene &scene = s.scene;
 
+  acceleration = scene.acceleration;
   accelerationJerk = scene.acceleration_jerk;
   accelerationJerkDifference = scene.acceleration_jerk_difference;
   blindSpotLeft = scene.blind_spot_left;
@@ -124,7 +125,7 @@ void OnroadWindow::mousePressEvent(QMouseEvent* e) {
   QPoint pos = e->pos();
 
   if (scene.speed_limit_changed && nvg->newSpeedLimitRect.contains(pos)) {
-    paramsMemory.putBool("SLCConfirmed", true);
+    params_memory.putBool("SLCConfirmed", true);
     return;
   }
 
@@ -134,7 +135,7 @@ void OnroadWindow::mousePressEvent(QMouseEvent* e) {
 
       if (scene.conditional_experimental) {
         int override_value = (scene.conditional_status >= 1 && scene.conditional_status <= 6) ? 0 : (scene.conditional_status >= 7 ? 5 : 6);
-        paramsMemory.putInt("CEStatus", override_value);
+        params_memory.putInt("CEStatus", override_value);
       } else {
         params.putBoolNonBlocking("ExperimentalMode", !params.getBool("ExperimentalMode"));
       }
@@ -168,7 +169,6 @@ void OnroadWindow::createMapWidget() {
   map = m;
   QObject::connect(m, &MapPanel::mapPanelRequested, this, &OnroadWindow::mapPanelRequested);
   QObject::connect(nvg->map_settings_btn, &MapSettingsButton::clicked, m, &MapPanel::toggleMapSettings);
-  QObject::connect(nvg->map_settings_btn_bottom, &MapSettingsButton::clicked, m, &MapPanel::toggleMapSettings);
   nvg->map_settings_btn->setEnabled(true);
 
   m->setFixedWidth(topWidget(this)->width() / 2 - UI_BORDER_SIZE);
@@ -321,15 +321,20 @@ void OnroadWindow::paintEvent(QPaintEvent *event) {
 
   QString logicsDisplayString;
   if (showJerk) {
-    logicsDisplayString += QString("Acceleration Jerk: %1 | ").arg(accelerationJerk, 0, 'f', 3);
-    logicsDisplayString += QString("Speed Jerk: %1").arg(speedJerk, 0, 'f', 3);
+    maxAcceleration = std::max(maxAcceleration, acceleration);
+    maxAccelTimer = maxAcceleration == acceleration ? UI_FREQ * 5 : maxAccelTimer - 1;
+
+    logicsDisplayString += QString("Acceleration: %1 %2 - ").arg(acceleration).arg(nvg->accelerationUnit);
+    logicsDisplayString += QString("Max: %1 %2 | ").arg(maxAcceleration).arg(nvg->accelerationUnit);
+    logicsDisplayString += QString("Acceleration Jerk: %1 | ").arg(accelerationJerk);
+    logicsDisplayString += QString("Speed Jerk: %1").arg(speedJerk);
   }
   if (showTuning) {
     if (!logicsDisplayString.isEmpty()) {
       logicsDisplayString += " | ";
     }
-    logicsDisplayString += QString("Friction: %1 | ").arg(liveValid ? QString::number(friction, 'f', 3) : "Calculating...");
-    logicsDisplayString += QString("Lateral Acceleration: %1").arg(liveValid ? QString::number(latAccel, 'f', 3) : "Calculating...");
+    logicsDisplayString += QString("Friction: %1 | ").arg(liveValid ? QString::number(friction) : "Calculating...");
+    logicsDisplayString += QString("Lateral Acceleration: %1").arg(liveValid ? QString::number(latAccel) : "Calculating...");
   }
   if (!logicsDisplayString.isEmpty()) {
     p.save();
@@ -344,23 +349,28 @@ void OnroadWindow::paintEvent(QPaintEvent *event) {
 
     QStringList parts = logicsDisplayString.split("|");
     for (QString part : parts) {
-      if (part.contains("Acceleration Jerk") && accelerationJerkDifference != 0) {
-        QString baseText = QString("Acceleration Jerk: %1").arg(accelerationJerk, 0, 'f', 3);
+      if (part.contains("Max:") && maxAccelTimer > 0) {
+        QString maxText = QString("Max: %1 %2 | ").arg(maxAcceleration).arg(nvg->accelerationUnit);
+        p.setPen(redColor());
+        p.drawText(x, y, maxText);
+        x += fontMetrics.horizontalAdvance(maxText);
+      } else if (part.contains("Acceleration Jerk") && accelerationJerkDifference != 0) {
+        QString baseText = QString("Acceleration Jerk: %1").arg(accelerationJerk);
         p.setPen(Qt::white);
         p.drawText(x, y, baseText);
         x += fontMetrics.horizontalAdvance(baseText);
 
-        QString diffText = QString(" (%1) | ").arg(accelerationJerkDifference, 0, 'f', 3);
+        QString diffText = QString(" (%1) | ").arg(accelerationJerkDifference);
         p.setPen(redColor());
         p.drawText(x, y, diffText);
         x += fontMetrics.horizontalAdvance(diffText);
       } else if (part.contains("Speed Jerk") && speedJerkDifference != 0) {
-        QString baseText = QString("Speed Jerk: %1").arg(speedJerk, 0, 'f', 3);
+        QString baseText = QString("Speed Jerk: %1").arg(speedJerk);
         p.setPen(Qt::white);
         p.drawText(x, y, baseText);
         x += fontMetrics.horizontalAdvance(baseText);
 
-        QString diffText = QString(" (%1)").arg(speedJerkDifference, 0, 'f', 3);
+        QString diffText = QString(" (%1)").arg(speedJerkDifference);
         if (showTuning) {
           diffText += " | ";
         }

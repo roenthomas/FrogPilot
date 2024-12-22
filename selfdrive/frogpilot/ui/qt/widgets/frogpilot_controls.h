@@ -5,7 +5,15 @@
 #include <QRegularExpression>
 #include <QTimer>
 
+#include "common/swaglog.h"
 #include "selfdrive/ui/qt/widgets/controls.h"
+
+inline void logError(const char *func, const char *file, int line, const std::string &message = "Unknown exception") {
+  static Params params_memory{"/dev/shm/params"};
+
+  LOGD("Error in %s (%s:%d): %s", func, file, line, message.c_str());
+  params_memory.putBool("DebugUI", true);
+}
 
 QColor loadThemeColors(const QString &colorKey, const bool clearCache = false);
 
