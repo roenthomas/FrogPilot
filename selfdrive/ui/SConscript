@@ -15,7 +15,7 @@ if arch == "Darwin":
   qt_env['FRAMEWORKS'] += ['OpenCL']
 
 # FIXME: remove this once we're on 5.15 (24.04)
-qt_env['CXXFLAGS'] += ["-Wno-deprecated-declarations"]
+qt_env['CXXFLAGS'] += ["-Wno-deprecated-declarations", "-g", "-O0"]
 
 qt_util = qt_env.Library("qt_util", ["#selfdrive/ui/qt/api.cc", "#selfdrive/ui/qt/util.cc"], LIBS=base_libs)
 widgets_src = ["ui.cc", "qt/widgets/input.cc", "qt/widgets/wifi.cc",
@@ -100,6 +100,10 @@ if GetOption('extras'):
   qt_env.Program('tests/ui_snapshot', [asset_obj, "tests/ui_snapshot.cc"] + qt_src, LIBS=qt_libs)
 
 qt_env['CPPPATH'] += ["../frogpilot/screenrecorder/openmax/include/"]
+
+qt_env['ENV']['QT_DEBUG_PLUGINS'] = '1'
+qt_env['ENV']['QML_IMPORT_TRACE'] = '1'
+qt_env['ENV']['QT_LOGGING_RULES'] = '*.debug=true'
 
 if GetOption('extras') and arch != "Darwin":
   # setup and factory resetter

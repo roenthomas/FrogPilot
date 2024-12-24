@@ -1,3 +1,6 @@
+#include <csignal>
+#include <execinfo.h>
+#include <iostream>
 #include <sys/resource.h>
 
 #include <QApplication>
@@ -8,7 +11,18 @@
 #include "selfdrive/ui/qt/util.h"
 #include "selfdrive/ui/qt/window.h"
 
+void crashHandler(int sig) {
+  void *array[20];
+  size_t size = backtrace(array, 20);
+  std::cerr << "Error: signal " << sig << ":\n";
+  backtrace_symbols_fd(array, size, STDERR_FILENO);
+  exit(1);
+}
+
 int main(int argc, char *argv[]) {
+  signal(SIGABRT, crashHandler);
+  signal(SIGSEGV, crashHandler);
+
   setpriority(PRIO_PROCESS, 0, -20);
 
   qInstallMessageHandler(swagLogMessageHandler);

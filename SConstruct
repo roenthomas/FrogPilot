@@ -180,9 +180,9 @@ if ccflags_option:
 env = Environment(
   ENV=lenv,
   CCFLAGS=[
-    "-g",
+    "-g3",
     "-fPIC",
-    "-O2",
+    "-O0",
     "-Wunused",
     "-Werror",
     "-Wshadow",
@@ -320,7 +320,6 @@ except SCons.Errors.UserError:
 qt_env['CPPPATH'] += qt_dirs# + ["#selfdrive/ui/qt/"]
 qt_flags = [
   "-D_REENTRANT",
-  "-DQT_NO_DEBUG",
   "-DQT_WIDGETS_LIB",
   "-DQT_GUI_LIB",
   "-DQT_QUICK_LIB",
@@ -328,11 +327,16 @@ qt_flags = [
   "-DQT_QML_LIB",
   "-DQT_CORE_LIB",
   "-DQT_MESSAGELOGCONTEXT",
+  "-DQT_FATAL_WARNINGS",
+  "-DQT_DEBUG",
 ]
-qt_env['CXXFLAGS'] += qt_flags
+qt_env['CXXFLAGS'] += qt_flags + ["-g", "-O0"]
 qt_env['LIBPATH'] += ['#selfdrive/ui', f"#third_party/maplibre-native-qt/{arch}/lib"]
 qt_env['RPATH'] += [Dir(f"#third_party/maplibre-native-qt/{arch}/lib").srcnode().abspath]
 qt_env['LIBS'] = qt_libs
+qt_env['ENV']['QT_DEBUG_PLUGINS'] = '1'
+qt_env['ENV']['QML_IMPORT_TRACE'] = '1'
+qt_env['ENV']['QT_LOGGING_RULES'] = '*.debug=true'
 
 if GetOption("clazy"):
   checks = [
