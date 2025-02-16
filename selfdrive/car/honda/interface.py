@@ -11,6 +11,7 @@ from openpilot.selfdrive.car import create_button_events, get_safety_config
 from openpilot.selfdrive.car.interfaces import CarInterfaceBase, TorqueFromLateralAccelCallbackType, FRICTION_THRESHOLD, LatControlInputs
 from openpilot.selfdrive.car.disable_ecu import disable_ecu
 from openpilot.selfdrive.controls.lib.drive_helpers import get_friction
+from openpilot.common.swaglog import cloudlog
 
 
 ButtonType = car.CarState.ButtonEvent.Type
@@ -58,8 +59,10 @@ class CarInterface(CarInterfaceBase):
   
   def torque_from_lateral_accel(self) -> TorqueFromLateralAccelCallbackType:
     if self.CP.flags & HondaFlags.EPS_MODIFIED:
+      cloudlog.info("Using modded torque_from_lateral_accel")
       return self.torque_from_lateral_accel_modded
     else:
+      cloudlog.info("Using default torque_from_lateral_accel")
       return self.torque_from_lateral_accel_linear
 
   @staticmethod
