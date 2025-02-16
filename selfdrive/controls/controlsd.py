@@ -34,6 +34,8 @@ from openpilot.system.hardware import HARDWARE
 from openpilot.selfdrive.frogpilot.controls.lib.frogpilot_acceleration import get_max_allowed_accel
 from openpilot.selfdrive.frogpilot.frogpilot_variables import CRASHES_DIR, NON_DRIVING_GEARS, get_frogpilot_toggles, params_memory
 
+from openpilot.common.swaglog import cloudlog
+
 SOFT_DISABLE_TIME = 3  # seconds
 LDW_MIN_SPEED = 31 * CV.MPH_TO_MS
 LANE_DEPARTURE_THRESHOLD = 0.1
@@ -133,11 +135,15 @@ class Controls:
 
     self.LaC: LatControl
     if self.CP.steerControlType == car.CarParams.SteerControlType.angle:
+      cloudlog.info("LatControlAngle set")
       self.LaC = LatControlAngle(self.CP, self.CI)
     elif self.CP.lateralTuning.which() == 'pid':
+      cloudlog.info("LatControlPID set")
       self.LaC = LatControlPID(self.CP, self.CI)
     elif self.CP.lateralTuning.which() == 'torque':
+      cloudlog.info("LatControlTorque set")
       self.LaC = LatControlTorque(self.CP, self.CI)
+  
 
     self.initialized = False
     self.state = State.disabled
