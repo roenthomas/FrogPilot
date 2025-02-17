@@ -11,9 +11,6 @@ from openpilot.selfdrive.car import create_button_events, get_safety_config
 from openpilot.selfdrive.car.interfaces import CarInterfaceBase, TorqueFromLateralAccelCallbackType, FRICTION_THRESHOLD, LatControlInputs
 from openpilot.selfdrive.car.disable_ecu import disable_ecu
 from openpilot.selfdrive.controls.lib.drive_helpers import get_friction
-import os
-import csv
-import pathlib
 
 
 ButtonType = car.CarState.ButtonEvent.Type
@@ -60,27 +57,9 @@ class CarInterface(CarInterfaceBase):
     return torque + friction
   
   def torque_from_lateral_accel(self) -> TorqueFromLateralAccelCallbackType:
-    fpath = 'data/Roen'
-    plib = pathlib.Path(fpath)
-    try:
-      plib.mkdir(parents=True)
-    except FileExistsError:
-      pass
     if self.CP.flags & HondaFlags.EPS_MODIFIED:
-      head = 'modded'
-      fname = head + '.csv'
-      path = os.path.join(fpath, fname)
-      with open(path, 'w', newline=' ') as f:
-        writer = csv.writer(f)
-        writer.writerows(head)
       return self.torque_from_lateral_accel_modded
     else:
-      head = 'linear'
-      fname = head + '.csv'
-      path = os.path.join(fpath, fname)
-      with open(path, 'w', newline=' ') as f:
-        writer = csv.writer(f)
-        writer.writerows(head)
       return self.torque_from_lateral_accel_linear
 
   @staticmethod
