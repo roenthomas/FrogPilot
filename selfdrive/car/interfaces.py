@@ -332,8 +332,6 @@ class CarInterfaceBase(ABC):
     return (latcontrol_inputs.lateral_acceleration / float(torque_params.latAccelFactor)) + friction
 
   def torque_from_lateral_accel(self) -> TorqueFromLateralAccelCallbackType:
-    with open("/data/tmp_debug_linear_interfaces.txt", "w") as f:
-        f.write("EPS linear torque function from interfaces.py loaded")
     return self.torque_from_lateral_accel_linear
 
   # returns a set of default params to avoid repetition in car specific params
