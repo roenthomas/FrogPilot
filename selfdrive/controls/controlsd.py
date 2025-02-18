@@ -133,16 +133,10 @@ class Controls:
 
     self.LaC: LatControl
     if self.CP.steerControlType == car.CarParams.SteerControlType.angle:
-      with open("/data/tmp_debug_angle.txt", "w") as f:
-        f.write("LatControlAngle set")
       self.LaC = LatControlAngle(self.CP, self.CI)
     elif self.CP.lateralTuning.which() == 'pid':
-      with open("/data/tmp_debug_pid.txt", "w") as f:
-        f.write("LatControlPID set")
       self.LaC = LatControlPID(self.CP, self.CI)
     elif self.CP.lateralTuning.which() == 'torque':
-      with open("/data/tmp_debug_torque.txt", "w") as f:
-        f.write("LatControlTorque set")
       self.LaC = LatControlTorque(self.CP, self.CI)
 
     self.initialized = False
