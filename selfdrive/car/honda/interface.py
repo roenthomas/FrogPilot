@@ -58,12 +58,8 @@ class CarInterface(CarInterfaceBase):
   
   def torque_from_lateral_accel(self) -> TorqueFromLateralAccelCallbackType:
     if self.CP.flags & HondaFlags.EPS_MODIFIED:
-      with open("/data/tmp_debug_modded.txt", "w") as f:
-        f.write("EPS modified torque function loaded")
       return self.torque_from_lateral_accel_modded
     else:
-      with open("/data/tmp_debug_linear.txt", "w") as f:
-        f.write("EPS linear torque function loaded")
       return self.torque_from_lateral_accel_linear
 
   @staticmethod
